@@ -7,6 +7,6 @@ feedingreading: kwh
 PV_reading: kwh
 PVhours_reading: hours
 water_reading: litres
-To use the data, calculate usage.  
-Consider pulling in climate data.
-Consider pulling in household occupancy data.:wq
+To use the data, calculate usage. This will require calculating the increment for both usage and date, then dividing usage by date.
+Consider pulling in climate data, as there could be some interesting correlations between usage and air temperature.
+Consider pulling in household occupancy data.  In particular, arrival of offspring.
