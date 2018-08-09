@@ -159,8 +159,107 @@ perday
 
 ```
 
-Ok. Now we have something we can work with.
+Ok. Now we have something meaningful to work with.  
 
+This is about to get exciting!  Having recored all of this data over 9 years, we're about to see what it looks like.
+
+It took a few iterations and searching through help files ot get to this point, but here it is.
+
+```{ggplot}
+# Electricity overview in kwh per day
+
+ggplot(perday, aes(x = date)) + 
+  geom_line(aes(y = peak_perday, colour = "peak")) +
+  geom_line(aes(y = offpeak_perday, colour = "offpeak")) +
+  geom_line(aes(y = PVgen_perday, colour = "PV generation")) +
+  geom_line(aes(y = feedin_perday, colour = "PV feed-in")) +
+  geom_line(aes(y = totalusage_perday, colour = "total usage")) +
+  labs(x = "Date", y = "kwh per day", title = "Electricity use, generation and export", colour = "Type") +
+  scale_color_manual(values = c("blue","red","green","black", "orange")) +
+  geom_hline(yintercept = 15.5, linetype = 2) + 
+  geom_hline(yintercept = 19, linetype = 2) +
+  geom_hline(yintercept = 13.09, linetype = 2, colour = "orange") 
+
+# have put in some hlines to give seasonal averages for usage of 4 person households
+# average household usage from energymadeeasy.gov.au.  
+# 4 person household postcode 5051
+# Summer 15.7; Autumn 15.5; WInter 19.0; Spring 16.1 kWh 
+
+# calculate average total usage per day and add in an hline.
+
+mean(perday$totalusage_perday, na.rm = TRUE)
+
+# Here are some PV efficiency plots
+
+ggplot(perday, aes(x = date, y = PVefficiency)) + 
+  geom_line() +
+  labs(x = "Date", y = "kwh per hour", title = "PV efficiency")
+
+ggplot(perday, aes(x = date, y = feedinefficiency)) + 
+  geom_line() +
+  labs(x = "Date", y = "kwh per hour", title = "feedin efficiency")
+
+# Combined
+
+ggplot(perday, aes(x = date)) + 
+  geom_line(aes(y = PVefficiency, colour = "PV generation efficiency")) +
+  geom_line(aes(y = feedinefficiency, colour = "feed-in efficiency")) +
+  labs(x = "Date", y = "kwh per hour", title = "PV efficiency") +
+  scale_color_manual(values = c("black","green"))
+
+
+```
+
+So many stories to tell!
+
+## So what's going on?
+
+Well, there's a bit of background to know.  
+
+When this kicked off it was just the two of us in a small weatherboard cottage with a newish 1 kW PV system that we paid a lot of money for (could get one 5 times bigger for the same dosh today).
+
+We run entirely on electricity.  We have a flat panel solar hot water system with offpeak electric resistance backup.  We also have a heat bank which again runs on offpeak electricity.  For a long time, this was our sole source of heating.
+
+Then in July 2011 bubs 1 arrived, followed shortly by a heat pump. We've since been tweaking our mix of heat bank (offpeak) and heat pump (peak).
+
+In January 2014 bubs 2 arrived.
+
+We also have visitors and a supplementary hot water system kicks in, running on off peak.
+
+So with that info, you can start to interpret the data.
+
+One other hint. Our PV panels point north.  Around summer solstice, the sun rises and sets in the south east and south west, so there are many hours when the sun is up, the PVs are producing, but it's from diffuse light rather than direct light.  You can pick that up in the efficiency plots.
+
+### Key findings
+
+#### Seasonality
+
+Both energy use and generation in our household are highly seasonal.
+
+Use peaks in winter.
+
+Generation peaks in summer.
+
+#### 4 person households
+Depsite living in a leaky 1949 weatherboard home run entirely on elctricity, our total usage is less than the average local 4 person household.
+
+
+#### Take home messages
+
+Unfortunately our electricity use and PV generation are completely at odds with each other.  For now, that's ok because we get a generous feed-in tarrif.  But that won't last long.  
+
+It looks like taking the current hous off grid would be a challenge and counterproductive.  We would need a big system to meet heating demand in winter, and then will have a massive surplus in summer.  Given that the main electricity use is heating, alternate fuels could be considered.  Gas is avaiable but is a fossil fuel.  Wood could be used, but costs and requires work.
+
+
+
+## Next steps
+It would be interesting to get daily data, pull in some climate data from the BOM and see if we can model this.
+
+We can do the same for water usage.
+ 
+As we plan our new energy efficient house, we are considering heating options.  Do we need to fork out big $ for a very efficient and effective in-slab hydronic heating system?  Do we suffice with a wood oven?  Will our salvaged heat pump and heat bank be enough?
+
+Whatever we end up with, rest assured that I will continue to record our meter readings and get back to you with some interesting data!
 
 
 
