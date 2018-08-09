@@ -71,6 +71,9 @@ perday <- perday %>%
   mutate(offpeak_perday = offpeak_usage / days)
 
 perday <- perday %>% 
+  mutate(totalusage_perday = peak_perday + offpeak_perday)
+
+perday <- perday %>% 
   mutate(feedin_perday = feedin_usage / days)
 
 perday <- perday %>% 
@@ -85,26 +88,48 @@ perday <- perday %>%
 perday <- perday %>% 
   mutate(PVefficiency = PVgen_perday / PVhours_perday)
 
+perday <- perday %>% 
+  mutate(feedinefficiency = feedin_perday / PVhours_perday)
+
 perday
 
-# lets try plotting this stuff
+# lets try plotting this stuff...
+
+# Electricity overview in kwh per day
 
 ggplot(perday, aes(x = date)) + 
   geom_line(aes(y = peak_perday, colour = "peak")) +
   geom_line(aes(y = offpeak_perday, colour = "offpeak")) +
   geom_line(aes(y = PVgen_perday, colour = "PV generation")) +
   geom_line(aes(y = feedin_perday, colour = "PV feed-in")) +
-  labs(x = "Date", y = "kwh per day", title = "Daily electricity", colour = "Type") +
-  scale_color_manual(values = c("blue","red","green","black"))
+  geom_line(aes(y = totalusage_perday, colour = "total usage")) +
+  labs(x = "Date", y = "kwh per day", title = "Electricity use, generation and export", colour = "Type") +
+  scale_color_manual(values = c("blue","red","green","black", "orange")) +
+  geom_hline(yintercept = 15.5, linetype = 2) +
+  geom_hline(yintercept = 19, linetype = 2) +
+  geom_hline(yintercept = 13.09, linetype = 2, colour = "orange") 
+  
+
+ggplot(perday, aes(x = date, y = PVefficiency)) + 
+  geom_line() +
+  labs(x = "Date", y = "kwh per hour", title = "PV efficiency")
+
+ggplot(perday, aes(x = date, y = feedinefficiency)) + 
+  geom_line() +
+  labs(x = "Date", y = "kwh per hour", title = "feedin efficiency")
+
+ggplot(perday, aes(x = date)) + 
+  geom_line(aes(y = PVefficiency, colour = "PV generation efficiency")) +
+  geom_line(aes(y = feedinefficiency, colour = "feed-in efficiency")) +
+  labs(x = "Date", y = "kwh per hour", title = "PV efficiency") +
+  scale_color_manual(values = c("black","green"))
+
+# Water use
 
 ggplot(perday, aes(x = date, y = water_perday)) + 
   geom_line() +
   labs(x = "Date", y = "litres per day", title = "Water usage") +
   geom_hline(yintercept=740)
-
-ggplot(perday, aes(x = date, y = PVefficiency)) + 
-  geom_line() +
-  labs(x = "Date", y = "kwh per hour", title = "PV efficiency")
 
 # It's interesting to note that a few things have happened in our household
 # 1st child was born July 2011.  An RCAC was installed that summer.
@@ -112,3 +137,6 @@ ggplot(perday, aes(x = date, y = PVefficiency)) +
 # We've been playing with the mix of RCAC and heatbank (offpeak) for heating.
 # Off peak kicks in in summer when visitors are over due to supplementary HWS.
 # We also have rainfall data, and climate data can be downloaded from BOM.
+
+
+mean(perday$totalusage_perday, na.rm = TRUE)
