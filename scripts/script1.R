@@ -131,12 +131,27 @@ ggplot(perday, aes(x = date, y = water_perday)) +
   labs(x = "Date", y = "litres per day", title = "Water usage") +
   geom_hline(yintercept=740)
 
+# have put in some hlines to give seasonal averages for usage of 4 person households
+# calculate average total usage per day and add in an hline.
+
+mean(perday$totalusage_perday, na.rm = TRUE)
+
+# I feel the need to clean out the unnecesary data and make a new table.
+
+eUGE <-  
+  select(perday,"date","peak_perday","offpeak_perday","totalusage_perday",
+         "PVgen_perday","feedin_perday","PVhours_perday","PVefficiency", "feedinefficiency")
+
+eUGE <- slice(eUGE,-1)
+eUGE
+
 # It's interesting to note that a few things have happened in our household
 # 1st child was born July 2011.  An RCAC was installed that summer.
 # 2nd child born January 2014.  Time at home has changed with part-time hours etc.
 # We've been playing with the mix of RCAC and heatbank (offpeak) for heating.
 # Off peak kicks in in summer when visitors are over due to supplementary HWS.
-# We also have rainfall data, and climate data can be downloaded from BOM.
+# PV efficiency dips at he height of summer - sun rises and sets south of E and W.
+# We also have rainfall data, and climate data can be downloaded from BOM. 
+# TOgether with daily (rather than monthly) data, there may be some interesting correlations.
 
 
-mean(perday$totalusage_perday, na.rm = TRUE)
