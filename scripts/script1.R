@@ -11,19 +11,25 @@ ggplot(meterreads, aes(x = date)) +
   geom_line(aes(y = PV_reading, colour = "PV")) +
   geom_line(aes(y = feedin_reading, colour = "PV feed-in")) +
   labs(x = "Date", y = "kwh", title = "Power reads", colour = "Read type") +
-  scale_color_manual(values = c("blue","red","green","black"))
+  scale_color_manual(values = c("blue","red","green","black")) +
+  theme(panel.background = element_rect(fill = "white"),
+        panel.border = element_rect(fill = NA))
 
 # plot PV hours in a seperate graph
 
 ggplot(meterreads, aes(x = date, y = PVhours_reading)) +
   geom_line() +
-  labs(x = "Date", y = "hours", title = "PVhours")
+  labs(x = "Date", y = "hours", title = "PVhours") +
+  theme(panel.background = element_rect(fill = "white"),
+        panel.border = element_rect(fill = NA))
 
 # plot water reading in a seperate graph
 
 ggplot(meterreads, aes(x = date, y = water_reading)) + 
   geom_line() +
-  labs(x = "Date", y = "litres", title = "Water")
+  labs(x = "Date", y = "litres", title = "Water") +
+  theme(panel.background = element_rect(fill = "white"),
+        panel.border = element_rect(fill = NA))
 
 # make a new tibble called 'usage' from 'meterreads' and
 # add a column called peak_usage by using mutate and lag
@@ -60,7 +66,7 @@ usage <- usage %>%
   mutate(days = as.integer(date -
            lag(date, default = first(date))))
 
-usage
+usage <- slice(usage, -1)
 
 # make a new table called perday.  divide usage by number of days to get usage per day.
 
@@ -105,31 +111,45 @@ ggplot(perday, aes(x = date)) +
   geom_line(aes(y = totalusage_perday, colour = "total usage")) +
   labs(x = "Date", y = "kwh per day", title = "Electricity use, generation and export", colour = "Type") +
   scale_color_manual(values = c("blue","red","green","black", "orange")) +
-  geom_hline(yintercept = 15.5, linetype = 2) +
+  geom_hline(yintercept = 15.5, linetype = 2) + 
   geom_hline(yintercept = 19, linetype = 2) +
-  geom_hline(yintercept = 13.09, linetype = 2, colour = "orange") 
-  
+  geom_hline(yintercept = 13.09, linetype = 2, colour = "orange") +
+  theme(panel.background = element_rect(fill = "white"),
+        panel.border = element_rect(fill = NA,),
+        axis.text.x = element_text(angle = 90))
+
+# average household usage from energymadeeasy.gov.au.  
+# 4 person household postcode 5051
+# Summer 15.7; Autumn 15.5; WInter 19.0; Spring 16.1 kWh 
 
 ggplot(perday, aes(x = date, y = PVefficiency)) + 
   geom_line() +
-  labs(x = "Date", y = "kwh per hour", title = "PV efficiency")
+  labs(x = "Date", y = "kwh per hour", title = "PV efficiency") +
+  theme(panel.background = element_rect(fill = "white"),
+        panel.border = element_rect(fill = NA))
 
 ggplot(perday, aes(x = date, y = feedinefficiency)) + 
   geom_line() +
-  labs(x = "Date", y = "kwh per hour", title = "feedin efficiency")
+  labs(x = "Date", y = "kwh per hour", title = "feedin efficiency") +
+  theme(panel.background = element_rect(fill = "white"),
+        panel.border = element_rect(fill = NA))
 
 ggplot(perday, aes(x = date)) + 
   geom_line(aes(y = PVefficiency, colour = "PV generation efficiency")) +
   geom_line(aes(y = feedinefficiency, colour = "feed-in efficiency")) +
   labs(x = "Date", y = "kwh per hour", title = "PV efficiency") +
-  scale_color_manual(values = c("black","green"))
+  scale_color_manual(values = c("black","green")) +
+  theme(panel.background = element_rect(fill = "white"),
+        panel.border = element_rect(fill = NA))
 
 # Water use
 
 ggplot(perday, aes(x = date, y = water_perday)) + 
   geom_line() +
   labs(x = "Date", y = "litres per day", title = "Water usage") +
-  geom_hline(yintercept=740)
+  geom_hline(yintercept=740) +
+  theme(panel.background = element_rect(fill = "white"),
+        panel.border = element_rect(fill = NA))
 
 # have put in some hlines to give seasonal averages for usage of 4 person households
 # calculate average total usage per day and add in an hline.
@@ -142,8 +162,6 @@ eUGE <-
   select(perday,"date","peak_perday","offpeak_perday","totalusage_perday",
          "PVgen_perday","feedin_perday","PVhours_perday","PVefficiency", "feedinefficiency")
 
-eUGE <- slice(eUGE,-1)
-eUGE
 
 # It's interesting to note that a few things have happened in our household
 # 1st child was born July 2011.  An RCAC was installed that summer.
