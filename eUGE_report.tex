@@ -1,0 +1,469 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={eUGE - electricity Use Generation and Export},
+            pdfauthor={Ryan Farquharson},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{eUGE - \textbf{e}lectricity \textbf{U}se \textbf{G}eneration and
+\textbf{E}xport}
+    \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+    \author{Ryan Farquharson}
+    \preauthor{\centering\large\emph}
+  \postauthor{\par}
+      \predate{\centering\large\emph}
+  \postdate{\par}
+    \date{9 August 2018}
+
+
+\begin{document}
+\maketitle
+
+Being a closet greenie, and a scientist, I have been fascinated by
+energy and water use. Many people decry the cost of utilities with
+little to no understanding of how much they use, nor how much they
+waste. An almost daily ritual for me is to wander up to the water meter,
+then down to the rain gauge, and back up to the electricity meter and
+record all the numbers, by hand, into an exercise book. I have around a
+thousand entries. Until now, I have done little with that data.
+
+This presented a great oportunity to hone some skills in data
+exploration and visualisation, plus setting up file structures, version
+control and doing some simple calcualtions etc. What is described here
+is not necessarily the best way to do things. Let's say it's been a good
+learning experience!
+
+\subsubsection{Methods}\label{methods}
+
+\paragraph{Meter readings:}\label{meter-readings}
+
+Meter readings were recorded by hand at the end of each day, whenever
+possible, from May 2009 to present. The reads recorded are:
+
+\begin{itemize}
+\tightlist
+\item
+  Date (yyyy-mm-dd)
+\item
+  Peak (kwh)
+\item
+  Offpeak (kwh)
+\item
+  PV feedin (kwh)
+\item
+  PV generation (kwh)
+\item
+  PV hours (hours)
+\end{itemize}
+
+Rainfall and mains water were also recorded, and climate data can be
+obtained from BOM. But we have left that out for now and will focus on
+electricity.
+
+The raw meter readings were transcribed into a spreadsheet and saved as
+the meterreads.csv file. For this exercise, instad of trying to
+transcribe all of the data, I just took the full reads that were closest
+to the end of each month.
+
+Some initial plots were done which revealed a number of typographical
+errors. These were corrected by going back to the exercise book and
+checking the data. Unfortunately I did not save or commit the incorrect
+file or the plots. You'll just have to trust me on that! It was great
+having the original excercise book on hand. If this was someone else's
+data, QC would have been tricky.
+
+\paragraph{Directory structures and version
+control}\label{directory-structures-and-version-control}
+
+Being the first time I've worked like this, I manually set up a project
+folder and subfolders for doc, data, results. I also set up a git
+repository and remote master. I then opened up a new project in Rstudio.
+Note that I first saved this markdown file in the doc folder but ran
+into trouble with the directory structure. The code below should solve
+this problem.
+
+\begin{verbatim}
+{r setup, message = FALSE, warning = FALSE, result = "hide"}
+
+knitr::opts_chunk$set(echo = TRUE, message=FALSE, warning = FALSE)
+
+knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
+\end{verbatim}
+
+\paragraph{Data processing}\label{data-processing}
+
+First I loaded the tidyverse library and used read\_csv to bring the
+meterreads.csv file in as a tibble.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(tidyverse)}
+
+\NormalTok{meterreads <-}\StringTok{ }\KeywordTok{read_csv}\NormalTok{(}\StringTok{"data/meterreads.csv"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{meterreads}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 111 x 7
+##    date       peak_reading offpeak_reading feedin_reading PV_reading
+##    <date>            <int>           <int>          <int>      <int>
+##  1 2009-05-30         1872            3195            888       1161
+##  2 2009-06-27         2030            3663            906       1191
+##  3 2009-07-30         2196            4200            932       1227
+##  4 2009-08-30         2230            4543            978       1286
+##  5 2009-09-29         2406            4865           1042       1366
+##  6 2009-10-30         2500            5047           1137       1478
+##  7 2009-11-29         2556            5047           1230       1590
+##  8 2009-12-27         2651            5047           1323       1702
+##  9 2010-01-31         2753            5090           1448       1858
+## 10 2010-02-28         2870            5145           1536       1977
+## # ... with 101 more rows, and 2 more variables: PVhours_reading <int>,
+## #   water_reading <int>
+\end{verbatim}
+
+Note that with tidyverse, the date came in as datatype which came in
+handy down the track.
+
+Some exploratory data analysis was done using ggplot.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#plot power reads i.e. peak, offpeak and PV}
+
+\KeywordTok{ggplot}\NormalTok{(meterreads, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ date)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_line}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y =}\NormalTok{ peak_reading, }\DataTypeTok{colour =} \StringTok{"peak"}\NormalTok{)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_line}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y =}\NormalTok{ offpeak_reading, }\DataTypeTok{colour =} \StringTok{"offpeak"}\NormalTok{)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_line}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y =}\NormalTok{ PV_reading, }\DataTypeTok{colour =} \StringTok{"PV"}\NormalTok{)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_line}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y =}\NormalTok{ feedin_reading, }\DataTypeTok{colour =} \StringTok{"PV feed-in"}\NormalTok{)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{x =} \StringTok{"Date"}\NormalTok{, }\DataTypeTok{y =} \StringTok{"kwh"}\NormalTok{, }\DataTypeTok{title =} \StringTok{"Power reads"}\NormalTok{, }\DataTypeTok{colour =} \StringTok{"Read type"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_color_manual}\NormalTok{(}\DataTypeTok{values =} \KeywordTok{c}\NormalTok{(}\StringTok{"blue"}\NormalTok{,}\StringTok{"red"}\NormalTok{,}\StringTok{"green"}\NormalTok{,}\StringTok{"black"}\NormalTok{)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{panel.background =} \KeywordTok{element_rect}\NormalTok{(}\DataTypeTok{fill =} \StringTok{"white"}\NormalTok{),}
+        \DataTypeTok{panel.border =} \KeywordTok{element_rect}\NormalTok{(}\DataTypeTok{fill =} \OtherTok{NA}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{eUGE_report_files/figure-latex/exploratory plots-1.pdf}
+
+So far so good. You can see the meter reads going up over time with some
+bumps along the way, and if you look closely enough, some different
+slopes at different times.
+
+But that hides most of the story. What we actually need is usage -
+i.e.~the increment between each read.
+
+The first step to get usage is to get the diffence in each meter read
+from the previous reading. To do this, I used mutate() and lag().
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# make a new tibble called 'usage' from 'meterreads' and}
+\CommentTok{# add a column called peak_usage by using mutate and lag}
+\CommentTok{# mutate makes a new column called peak_usage by starting with peak_reading and subtracting a value}
+\CommentTok{# this value is also from the peak_reading column, but by using lag it is from the previous row.}
+
+\NormalTok{usage <-}\StringTok{ }\NormalTok{meterreads }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{peak_usage =}\NormalTok{ peak_reading }\OperatorTok{-}\StringTok{ }
+\StringTok{           }\KeywordTok{lag}\NormalTok{(peak_reading, }\DataTypeTok{default =} \KeywordTok{first}\NormalTok{(peak_reading)))}
+
+\CommentTok{# now repeat the process for the other readings}
+
+\NormalTok{usage <-}\StringTok{ }\NormalTok{usage }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{offpeak_usage =}\NormalTok{ offpeak_reading }\OperatorTok{-}
+\StringTok{           }\KeywordTok{lag}\NormalTok{(offpeak_reading, }\DataTypeTok{default =} \KeywordTok{first}\NormalTok{(offpeak_reading)))}
+
+\NormalTok{usage <-}\StringTok{ }\NormalTok{usage }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{feedin_usage =}\NormalTok{ feedin_reading }\OperatorTok{-}
+\StringTok{           }\KeywordTok{lag}\NormalTok{(feedin_reading, }\DataTypeTok{default =} \KeywordTok{first}\NormalTok{(feedin_reading)))}
+
+\NormalTok{usage <-}\StringTok{ }\NormalTok{usage }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{PV_usage =}\NormalTok{ PV_reading }\OperatorTok{-}
+\StringTok{           }\KeywordTok{lag}\NormalTok{(PV_reading, }\DataTypeTok{default =} \KeywordTok{first}\NormalTok{(PV_reading)))}
+
+\NormalTok{usage <-}\StringTok{ }\NormalTok{usage }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{PVhours_usage =}\NormalTok{ PVhours_reading }\OperatorTok{-}
+\StringTok{           }\KeywordTok{lag}\NormalTok{(PVhours_reading, }\DataTypeTok{default =} \KeywordTok{first}\NormalTok{(PVhours_reading)))}
+
+\NormalTok{usage <-}\StringTok{ }\NormalTok{usage }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{water_usage =}\NormalTok{ water_reading }\OperatorTok{-}
+\StringTok{           }\KeywordTok{lag}\NormalTok{(water_reading, }\DataTypeTok{default =} \KeywordTok{first}\NormalTok{(water_reading)))}
+
+\NormalTok{usage <-}\StringTok{ }\NormalTok{usage }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{days =} \KeywordTok{as.integer}\NormalTok{(date }\OperatorTok{-}
+\StringTok{           }\KeywordTok{lag}\NormalTok{(date, }\DataTypeTok{default =} \KeywordTok{first}\NormalTok{(date))))}
+
+\NormalTok{usage <-}\StringTok{ }\KeywordTok{slice}\NormalTok{(usage, }\OperatorTok{-}\DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+There was probably a quicker way to do this, but for now, it did the
+trick. One problem though, it gives us a bunch of zeros in the first
+row. ggplot is smart enough to ignore these zeros, but really I should
+clean up this data before moving on. See the last line where I take a
+slice of usage except for the first row.
+
+So we now have the increment of power usage, generation and export
+between meter reads.
+
+But guess what. Months have different numbers of days, and I couldn't
+always do a meter read at the end of the month. So to compare between
+months, we need to get usage per day.
+
+This was done by dividing each usage by the number of days in each
+increment. Happily because we're playing in the tidyverse, calculating
+the number of days was a cinch. If you were paying attention, you'd have
+seen it in the previous chunk.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# make a new table called perday.  divide usage by number of days to get usage per day.}
+
+\NormalTok{perday <-}\StringTok{ }\NormalTok{usage }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{peak_perday =}\NormalTok{ peak_usage }\OperatorTok{/}\StringTok{ }\NormalTok{days)}
+
+\NormalTok{perday <-}\StringTok{ }\NormalTok{perday }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{offpeak_perday =}\NormalTok{ offpeak_usage }\OperatorTok{/}\StringTok{ }\NormalTok{days)}
+
+\NormalTok{perday <-}\StringTok{ }\NormalTok{perday }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{totalusage_perday =}\NormalTok{ peak_perday }\OperatorTok{+}\StringTok{ }\NormalTok{offpeak_perday)}
+
+\NormalTok{perday <-}\StringTok{ }\NormalTok{perday }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{feedin_perday =}\NormalTok{ feedin_usage }\OperatorTok{/}\StringTok{ }\NormalTok{days)}
+
+\NormalTok{perday <-}\StringTok{ }\NormalTok{perday }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{PVgen_perday =}\NormalTok{ PV_usage }\OperatorTok{/}\StringTok{ }\NormalTok{days)}
+
+\NormalTok{perday <-}\StringTok{ }\NormalTok{perday }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{PVhours_perday =}\NormalTok{ PVhours_usage }\OperatorTok{/}\StringTok{ }\NormalTok{days)}
+
+\NormalTok{perday <-}\StringTok{ }\NormalTok{perday }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{water_perday =}\NormalTok{ water_usage }\OperatorTok{/}\StringTok{ }\NormalTok{days)}
+
+\NormalTok{perday <-}\StringTok{ }\NormalTok{perday }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{PVefficiency =}\NormalTok{ PVgen_perday }\OperatorTok{/}\StringTok{ }\NormalTok{PVhours_perday)}
+
+\NormalTok{perday <-}\StringTok{ }\NormalTok{perday }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{feedinefficiency =}\NormalTok{ feedin_perday }\OperatorTok{/}\StringTok{ }\NormalTok{PVhours_perday)}
+\end{Highlighting}
+\end{Shaded}
+
+Ok. Now we have something meaningful to work with.
+
+This is about to get exciting! Having recored all of this data over 9
+years, we're about to see what it looks like.
+
+It took a few iterations and searching through help files to get to this
+point, but here it is.
+
+First up, some PV efficiency plots
+
+\includegraphics{eUGE_report_files/figure-latex/efficiency plots-1.pdf}
+
+Remember, this is a 1 kW PV system and in summer we're getting around
+0.3 kW per hour. Winter looks depressing, doesn't it? Wondering what
+that dip in summer is? Read on.
+
+Now let's put everything together. Get ready for it\ldots{}
+
+\includegraphics{eUGE_report_files/figure-latex/visualisation using ggplot-1.pdf}
+
+So many stories to tell!
+
+\subsubsection{So what's going on?}\label{so-whats-going-on}
+
+Well, there's a bit of background to know.
+
+When this kicked off it was just the two of us in a small weatherboard
+cottage with a newish 1 kW PV system that we paid a lot of money for
+(could get one 5 times bigger for the same dosh today).
+
+We run entirely on electricity. We have a flat panel solar hot water
+system with offpeak electric resistance backup. We also have a heat bank
+which again runs on offpeak electricity. For a long time, this was our
+sole source of heating.
+
+Then in July 2011 bubs 1 arrived, followed shortly by a reverse cycle
+heat pump in the living room. We've since been tweaking our mix of heat
+bank (offpeak) and heat pump (peak).
+
+In January 2014 bubs 2 arrived.
+
+We also have visitors periodically when a supplementary hot water system
+kicks in, running on off peak.
+
+So with that info, you can start to interpret the data.
+
+One other hint. Our PV panels point north. Around summer solstice, the
+sun rises and sets in the south east and south west, so there are many
+hours when the sun is up, the PVs are producing, but it's from diffuse
+light rather than direct light. That's the dip in the efficiency plots
+that you saw before.
+
+\subsubsection{Key findings}\label{key-findings}
+
+\paragraph{Seasonality}\label{seasonality}
+
+Both energy use and generation in our household are highly seasonal.
+
+Use peaks in winter.
+
+Generation peaks in summer.
+
+\paragraph{4 person households - how we
+compare}\label{person-households---how-we-compare}
+
+Depsite living in a leaky 1949 weatherboard home run entirely on
+electricity, our total usage is less than the average local 4 person
+household. Can we do better? Hell yeah. Stay tuned. We're currently
+designing our energy efficient dream home.
+
+\paragraph{Take home messages}\label{take-home-messages}
+
+Unfortunately our electricity use and PV generation are completely out
+of sync. For now, that's ok because we get a generous feed-in tarrif.
+Credits in summer help pay some of the winter bills. But we're not
+expecting that to last long.
+
+It looks like taking the current house off grid would be a money sucking
+challenge and counterproductive. We would need a big system to meet
+heating demand in winter, and then will have a massive surplus in summer
+with no-one to give it to. Given that our main electricity use is
+heating, alternate fuels could be considered. Gas is avaiable but is a
+dirty fossil fuel. Wood could be used, but it costs and requires work.
+
+\subsubsection{Next steps}\label{next-steps}
+
+It would be interesting to get daily data, pull in some climate data
+from the BOM and pull out some relationships.
+
+We can do the same for water usage.
+
+The modeller in me wants to go crazy with it. Plate is too full.
+
+As we plan our new energy efficient house, we are considering heating
+options. Do we need to fork out big \$ for a very efficient, effective
+and somewhat luxurious in-slab hydronic heating system? Do we suffice
+with a wood oven? What about salvaging our heat pump and heat bank be
+enough? Will we even need heating at all?
+
+Whatever we end up with, rest assured that I will continue to record our
+meter readings and get back to you with some interesting data. Hopefully
+it won't take me another 9 years!
+
+
+\end{document}
