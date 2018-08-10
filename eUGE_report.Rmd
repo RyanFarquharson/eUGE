@@ -3,7 +3,6 @@ title: "eUGE - **e**lectricity **U**se **G**eneration and **E**xport"
 author: "Ryan Farquharson"
 date: "9 August 2018"
 output:
-  pdf_document: default
   html_document: default
 ---
 
@@ -33,8 +32,7 @@ Some initial plots were done which revealed a number of typographical errors.  T
 #### Directory structures and version control
 Being the first time I've worked like this, I manually set up a project folder and subfolders for doc, data, results.  I also set up a git repository and remote master.  I then opened up a new project in Rstudio.  Note that I first saved this markdown file in the doc folder but ran into trouble with the directory structure.  The code below should solve this problem.
 
-```
-{r setup, message = FALSE, warning = FALSE, result = "hide"}
+```{r setup, echo = FALSE, message = FALSE, warning = FALSE}
 
 knitr::opts_chunk$set(echo = TRUE, message=FALSE, warning = FALSE)
 
@@ -44,15 +42,11 @@ knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
 #### Data processing
 First I loaded the tidyverse library and used read_csv to bring the meterreads.csv file in as a tibble.
 
-```{r data processing, message = FALSE}
+```{r data processing, echo = FALSE, message = FALSE}
 library(tidyverse)
 
 meterreads <- read_csv("data/meterreads.csv")
 
-```
-
-```{r meterreads tibble}
-meterreads
 ```
 
 Note that with tidyverse, the date came in as datatype <date> which came in handy down the track.
@@ -60,7 +54,7 @@ Note that with tidyverse, the date came in as datatype <date> which came in hand
 Some exploratory data analysis was done using ggplot.
 
 
-```{r exploratory plots}
+```{r exploratory plots, echo = FALSE}
 
 #plot power reads i.e. peak, offpeak and PV
 
@@ -82,7 +76,8 @@ But that hides most of the story.  What we actually need is usage - i.e. the inc
 
 The first step to get usage is to get the diffence in each meter read from the previous reading.  To do this, I used mutate() and lag().
 
-```{r getting usage from meter reads}
+```{r getting usage from meter reads, echo = FALSE}
+
 # make a new tibble called 'usage' from 'meterreads' and
 # add a column called peak_usage by using mutate and lag
 # mutate makes a new column called peak_usage by starting with peak_reading and subtracting a value
@@ -120,9 +115,13 @@ usage <- usage %>%
 
 usage <- slice(usage, -1)
 
+usage <- slice(usage, -110)
+
+usage <- slice(usage, -109)
+
 ```
 
-There was probably a quicker way to do this, but for now, it did the trick.  One problem though, it gives us a bunch of zeros in the first row.  ggplot is smart enough to ignore these zeros, but really I should clean up this data before moving on.  See the last line where I take a slice of usage except for the first row.
+There was probably a quicker way to do this, but for now, it did the trick.  One problem though, it gives us a bunch of zeros in the first row.  ggplot is smart enough to ignore these zeros, but really I should clean up this data before moving on.  See the last 3 lines where I take a slice of usage except for the first row, then the last 2 rows.
 
 
 So we now have the increment of power usage, generation and export between meter reads.  
@@ -131,7 +130,7 @@ But guess what.  Months have different numbers of days, and I couldn't always do
 
 This was done by dividing each usage by the number of days in each increment.  Happily because we're playing in the tidyverse, calculating the number of days was a cinch.  If you were paying attention, you'd have seen it in the previous chunk.
 
-```{r getting per day data from usage}
+```{r getting per day data from usage, echo = FALSE}
 # make a new table called perday.  divide usage by number of days to get usage per day.
 
 perday <- usage %>% 
@@ -163,34 +162,158 @@ perday <- perday %>%
 
 ```
 
-Ok. Now we have something meaningful to work with.  
+Ok. Now we have something meaningful to work with.  I did some more cleaning up and made a table called eUGE3 with months, years and seasons as factors.
+
+```{r making eUGE tables, echo = FALSE}
+
+eUGE1 <-  
+  select(perday,"date","peak_perday","offpeak_perday","totalusage_perday",
+         "PVgen_perday","feedin_perday","PVhours_perday","PVefficiency", "feedinefficiency")
+
+
+# got rid of other data and trimmed to give 9 complete years
+
+monthlist1 <- c(6,7,8,9,10,11,12)
+monthlist2 <- c(1,2,3,4,5,6,7,8,9,10,11,12)
+monthlist3 <- c(1,2,3,4,5)
+monthlist <- c(monthlist1, monthlist2, monthlist2, monthlist2, monthlist2, monthlist2, monthlist2, monthlist2, monthlist2, monthlist3)
+
+# Make eUGE2 which has a month list
+
+eUGE2 <- eUGE1 %>% 
+  mutate(month = as.factor(monthlist))
+
+# Make a year list
+yearlist1 <- c(2009,2009,2009,2009,2009,2009,2009)
+yearlist2 <- c(2010,2010,2010,2010,2010,2010,2010,2010,2010,2010,2010,2010)
+yearlist3 <- yearlist2 + 1
+yearlist4 <- yearlist2 + 2
+yearlist5 <- yearlist2 + 3
+yearlist6 <- yearlist2 + 4
+yearlist7 <- yearlist2 + 5
+yearlist8 <- yearlist2 + 6
+yearlist9 <- yearlist2 + 7
+yearlist10 <- c(2018,2018,2018,2018,2018)
+
+yearlist <- c(yearlist1,yearlist2,yearlist3,yearlist4,yearlist5,yearlist6,yearlist7,yearlist8,yearlist9,yearlist10)
+
+# Add year list to eUGE2
+
+eUGE2 <- eUGE2 %>% 
+  mutate(year = as.factor(yearlist))
+
+# Make a season list
+
+seasonlist1 <- c('Winter', 'Winter', 'Winter', 'Spring', 'Spring', 'Spring', 'Summer')
+seasonlist2 <- c('Summer', 'Summer', 'Autumn', 'Autumn', 'Autumn')
+seasonlist3 <- c(seasonlist2, seasonlist1)
+seasonlist <- c(seasonlist1, seasonlist3, seasonlist3, seasonlist3, seasonlist3, seasonlist3, seasonlist3, seasonlist3, seasonlist3, seasonlist2)
+
+eUGE3 <- eUGE2 %>% 
+  mutate(season = as.factor(seasonlist))
+
+```
+
 
 This is about to get exciting!  Having recored all of this data over 9 years, we're about to see what it looks like.
 
-It took a few iterations and searching through help files to get to this point, but here it is.
+Let's do some exploration first.
 
-First up, some PV efficiency plots
+### Data exploration
 
-```{r efficiency plots, echo = FALSE}
+Some time ago, before it became cool, and then became a money makign exercise for the wealthy, we installed a small (1 kW) photovoltaic system connected to the grid.  Now for some PV plots.
 
-# Here are some PV efficiency plots
+```{r PV plots, echo = FALSE}
 
-ggplot(perday, aes(x = date)) + 
-  geom_line(aes(y = PVefficiency, colour = "PV generation efficiency")) +
-  geom_line(aes(y = feedinefficiency, colour = "feed-in efficiency")) +
-  labs(x = "Date", y = "kwh per hour", title = "PV efficiency") +
-  scale_color_manual(values = c("blue","green")) +
-  theme(panel.grid = element_blank(),
-        panel.background = element_rect(fill = "white")) +
+ggplot(eUGE3, aes(x = as.factor(month), y = PVgen_perday, colour = year)) +
+  geom_point() +
+  labs(x = "Month", y = "kWh per day", title = "PV generation") +
+  theme(panel.background = element_rect(fill = "white"),
+        panel.border = element_rect(fill = NA))
+
+ggplot(eUGE3, aes(x = as.factor(month), y = feedin_perday, colour = year)) +
+  geom_point() +
+  labs(x = "Month", y = "kWh per day", title = "PV feed-in") +
   theme(panel.background = element_rect(fill = "white"),
         panel.border = element_rect(fill = NA))
 
 ```
 
-Remember, this is a 1 kW PV system and in summer we're getting around 0.3 kW per hour.  Winter looks depressing, doesn't it?  Wondering what that dip in summer is?  Read on. 
+Note the seasonality.
+
+So, how are these panels performing over time?
+
+```{r PV efficiency plots, echo = FALSE}
+
+# Here are some PV efficiency plots
+
+
+ggplot(perday, aes(x = date)) + 
+  geom_line(aes(y = PVefficiency, colour = "PV generation efficiency")) +
+  geom_line(aes(y = feedinefficiency, colour = "feed-in efficiency")) +
+  labs(x = "Date", y = "kwh per hour", title = "PV efficiency") +
+  scale_color_manual(values = c("black","blue")) +
+  theme(panel.background = element_rect(fill = "white"),
+        panel.border = element_rect(fill = NA))
+
+```
+
+This is the amount of electricity that our teeny weeny 1 kW PV system generates per hour of daylight.  In summer we're getting around 0.3 kW per hour.  Winter looks depressing, doesn't it?  Wondering what that dip in summer is?  Read on. 
+
+Now let's take a look at consumption.
+
+```{r peak usage, echo = FALSE}
+
+ggplot(eUGE3, aes(x = as.factor(month), y = peak_perday, colour = year)) +
+  geom_point() +
+  labs(x = "Month", y = "kWh per day", title = "Peak usage") +
+  theme(panel.background = element_rect(fill = "white"),
+        panel.border = element_rect(fill = NA))
+
+```
+
+Again, note the seasonality, and the complete mismatch between PV generation and usage.  
+
+As you can see, there's quite a spread in our use of peak electricity across years, particularly over winter.  If you look really closely, you can see that in later years we used more peak than early years.  This corresponds to the arrival of two children, going part time (and hence spending more time at home) and an air conditioner.
+
+```{r off peak usage, echo = FALSE}
+# Offpeak
+
+ggplot(eUGE3, aes(x = as.factor(month), y = offpeak_perday, colour = year)) +
+  geom_point() +
+  labs(x = "Month", y = "kWh per day", title = "Off-Peak usage") +
+  theme(panel.background = element_rect(fill = "white"),
+        panel.border = element_rect(fill = NA))
+```
+
+And for off-peak electricity, you can see our reliance on an off-peak heat pump in the early years, with less reliance in later years due to the RC AC.
+
+So how do we compare to other households in our area?
+
+
+```{r total usage, echo = FALSE}
+
+ggplot(eUGE3, aes(x = as.factor(month), y = totalusage_perday, colour = season)) +
+  geom_point() +
+  labs(x = "Month", y = "kWh per day", title = "Total usage") +
+  scale_color_manual(values = c("orange","green","red", "blue")) +
+  theme(panel.background = element_rect(fill = "white"),
+        panel.border = element_rect(fill = NA)) +
+  geom_hline(yintercept = 15.7, linetype =2, colour = "red") + # average for local summer
+  geom_hline(yintercept = 15.5, linetype =2, colour = "orange") + # average for local autumn
+  geom_hline(yintercept = 19.0, linetype =2, colour = "blue") + # average for local winter
+  geom_hline(yintercept = 16.1, linetype =2, colour = "green") + # average for local spring
+  geom_hline(yintercept = 12.9, linetype =4, colour = "black") # average for our household
+
+```
+
+This is a plot of our total usage (peak + off-peak) over the 12 months of the year, for all of the 9 years.  Note the seasonality of usage.  
+
+The horizontal lines represent the seasonal use for the average 4 person household in our area (http://energymadeeasy.gov.au).  The black _. line represents the average for our household for the whole year.  As you can see, we do pretty well, especially considering that we live in an old, leaky, weatherboard cottage.
+
 
 Now let's put everything together.
-Get ready for it...
+Get ready for it... this is 'eUGE' !
 
 ```{r visualisation using ggplot, echo = FALSE}
 # Electricity overview in kwh per day
@@ -203,9 +326,9 @@ ggplot(perday, aes(x = date)) +
   geom_line(aes(y = totalusage_perday, colour = "total usage")) +
   labs(x = "Date", y = "kwh per day", title = "eUGE - electricity use, generation and export", colour = "Type") +
   scale_color_manual(values = c("blue","red","green","black", "orange")) +
-  geom_hline(yintercept = 15.5, linetype = 2) + 
-  geom_hline(yintercept = 19, linetype = 2) +
-  geom_hline(yintercept = 13.09, linetype = 2, colour = "orange") +
+  geom_hline(yintercept = 15.5, linetype = 2, colour = "orange") + 
+  geom_hline(yintercept = 19, linetype = 2, colour = "blue") +
+  geom_hline(yintercept = 12.9, linetype = 4, colour = "black") +
   theme(panel.background = element_rect(fill = "white"),
         panel.border = element_rect(fill = NA))
 
@@ -245,30 +368,40 @@ One other hint. Our PV panels point north.  Around summer solstice, the sun rise
 
 Both energy use and generation in our household are highly seasonal.
 
-Use peaks in winter.
+Useage peaks in winter.
 
 Generation peaks in summer.
 
+Bummer, huh?
+
 #### 4 person households - how we compare
-Depsite living in a leaky 1949 weatherboard home run entirely on electricity, our total usage is less than the average local 4 person household.  Can we do better?  Hell yeah.  Stay tuned.  We're currently designing our energy efficient dream home.
+
+Depsite living in a leaky 1949 weatherboard home run entirely on electricity, our total usage is less than the average local 4 person household.  Can we do better?  Hell yeah!!!  Stay tuned.  We're currently designing our energy efficient dream home, due to be constructed in 2019.  Proper orientation, double glazed uPVC windows, R6 insulation in the ceilings, R4 in the walls, internal thermal mass, blower door tested... you get the idea.
 
 
 #### Take home messages
 
 Unfortunately our electricity use and PV generation are completely out of sync.  For now, that's ok because we get a generous feed-in tarrif. Credits in summer help pay some of the winter bills.  But we're not expecting that to last long. 
 
-It looks like taking the current house off grid would be a money sucking challenge and counterproductive.  We would need a big system to meet heating demand in winter, and then will have a massive surplus in summer with no-one to give it to.  Given that our main electricity use is heating, alternate fuels could be considered.  Gas is avaiable but is a dirty fossil fuel.  Wood could be used, but it costs and requires work.
+It looks like taking the current house off grid would be a money sucking challenge and counterproductive.  We would need a big system to meet heating demand in winter, and then will have a massive surplus in summer without the ability to displace dirty fossil fuels.  
+Given that our main electricity use is heating, alternate fuels could be considered.  Gas is avaiable but is a dirty fossil fuel (especially when you consider fugitive emissions), isn't that cheap after all, and you loose more than half the heat up the flue.  Wood could be used, but it costs, can be environmentally dubious, and requires work which we may not be up for in our twilight years.
 
 
 ### Next steps
-It would be interesting to get daily data, pull in some climate data from the BOM and pull out some relationships.
+More data exploration! 
 
-We can do the same for water usage.
+I am intimately familiar with this data, but even I found things I wasn't expecting when trying different ways of visualising the data.  There's still more I'd like to try, and potentially a few more typos I need to iron out.
 
-The modeller in me wants to go crazy with it.  Plate is too full.
+It was really important to realise that whilst the big scary polt contains all of the stories, it's pretty difficult for anyone but me to tease them out.  So building up the story with some clear and simple plots is really important.
+
+It would be interesting to transcribe some of the daily data, pull in some climate data from the BOM and test out some relationships.
+
+We can do the same for water usage and rainfall, given that we have a tank plumbed in.
+
+The modeller in me wants to go crazy with it.  I'm resisting that urge.
  
 As we plan our new energy efficient house, we are considering heating options.  Do we need to fork out big $ for a very efficient, effective and somewhat luxurious in-slab hydronic heating system?  Do we suffice with a wood oven?  What about salvaging our heat pump and heat bank be enough?  Will we even need heating at all?
 
-Whatever we end up with, rest assured that I will continue to record our meter readings and get back to you with some interesting data.  Hopefully it won't take me another 9 years!
+Whatever we end up with, rest assured that I will continue to record our meter readings and get back to you with some interesting comparisons, no doubt.  Hopefully it won't take me another 9 years!
 
 
