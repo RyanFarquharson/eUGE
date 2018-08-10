@@ -229,17 +229,37 @@ ggplot(eUGE3, aes(x = as.factor(month), y = PVgen_perday, colour = year)) +
   geom_point() +
   labs(x = "Month", y = "kWh per day", title = "PV generation") +
   theme(panel.background = element_rect(fill = "white"),
-        panel.border = element_rect(fill = NA))
+        panel.border = element_rect(fill = NA)) +
+  scale_color_viridis_d()
 
 ggplot(eUGE3, aes(x = as.factor(month), y = feedin_perday, colour = year)) +
   geom_point() +
   labs(x = "Month", y = "kWh per day", title = "PV feed-in") +
   theme(panel.background = element_rect(fill = "white"),
-        panel.border = element_rect(fill = NA))
+        panel.border = element_rect(fill = NA)) +
+  scale_color_viridis_d()
 
 ```
 
 Note the seasonality.
+
+We can look at performance by plotting PV generation of feed-in against hours of operation.
+
+```{r PV performance, echo = FALSE}
+
+ggplot(eUGE3, aes(x = PVhours_perday, y = PVgen_perday, colour = month)) +
+  geom_point() +
+  labs(x = "Hours of operation", y = "kWh generated", title = "PV generation performance") +
+  theme(panel.background = element_rect(fill = "white"),
+        panel.border = element_rect(fill = NA))
+
+ggplot(eUGE3, aes(x = PVhours_perday, y = feedin_perday, colour = month)) +
+  geom_point() +
+  labs(x = "Hours of operation", y = "kWh exported", title = "PV export performance") +
+  theme(panel.background = element_rect(fill = "white"),
+        panel.border = element_rect(fill = NA))
+
+```
 
 So, how are these panels performing over time?
 
@@ -268,7 +288,8 @@ ggplot(eUGE3, aes(x = as.factor(month), y = peak_perday, colour = year)) +
   geom_point() +
   labs(x = "Month", y = "kWh per day", title = "Peak usage") +
   theme(panel.background = element_rect(fill = "white"),
-        panel.border = element_rect(fill = NA))
+        panel.border = element_rect(fill = NA)) +
+  scale_color_viridis_d()
 
 ```
 
@@ -283,10 +304,11 @@ ggplot(eUGE3, aes(x = as.factor(month), y = offpeak_perday, colour = year)) +
   geom_point() +
   labs(x = "Month", y = "kWh per day", title = "Off-Peak usage") +
   theme(panel.background = element_rect(fill = "white"),
-        panel.border = element_rect(fill = NA))
+        panel.border = element_rect(fill = NA)) +
+  scale_color_viridis_d()
 ```
 
-And for off-peak electricity, you can see our reliance on an off-peak heat pump in the early years, with less reliance in later years due to the RC AC.
+And for off-peak electricity, you can see our reliance on an off-peak heat pump in the early years, with less reliance in later years due to the RC AC.  I think this shows up better later.
 
 So how do we compare to other households in our area?
 
@@ -314,6 +336,8 @@ The horizontal lines represent the seasonal use for the average 4 person househo
 
 Now let's put everything together.
 Get ready for it... this is 'eUGE' !
+
+## eUGE
 
 ```{r visualisation using ggplot, echo = FALSE}
 # Electricity overview in kwh per day
