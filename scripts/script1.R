@@ -108,21 +108,23 @@ perday
 # lets try plotting this stuff...
 
 # Electricity overview in kwh per day
-
+# How to put hlines with legends in
 ggplot(perday, aes(x = date)) + 
   geom_line(aes(y = peak_perday, colour = "peak")) +
   geom_line(aes(y = offpeak_perday, colour = "offpeak")) +
   geom_line(aes(y = PVgen_perday, colour = "PV generation")) +
   geom_line(aes(y = feedin_perday, colour = "PV feed-in")) +
-  geom_line(aes(y = totalusage_perday, colour = "total usage")) +
-  labs(x = "Date", y = "kwh per day", title = "Electricity use, generation and export", colour = "Type") +
+  geom_line(aes(y = totalusage_perday, colour = "Total usage")) +
+  labs(x = "Date", y = "kwh per day", title = "Electricity use, generation and export", colour = "Electricity usage/generation") +
   scale_color_manual(values = c("blue","red","green","black", "orange")) +
-  geom_hline(yintercept = 15.5, linetype = 2) + 
-  geom_hline(yintercept = 19, linetype = 2) +
-  geom_hline(yintercept = 13.09, linetype = 2, colour = "orange") +
+  geom_hline(aes(yintercept = 15.5, linetype = "Autumn"), colour = "orange") + 
+  geom_hline(aes(yintercept = 19, linetype = "Winter"), colour = "blue") +
+  geom_hline(aes(yintercept = 12.9, linetype = "Our household"), colour = "black") +
   theme(panel.background = element_rect(fill = "white"),
-        panel.border = element_rect(fill = NA,),
-        axis.text.x = element_text(angle = 90))
+        panel.border = element_rect(fill = NA)) +
+  scale_linetype_manual(name = "Average local 4 person household", values = c(2, 2, 2), 
+                        guide = guide_legend(override.aes = list(color = c("orange", "black", "blue"))))
+
 
 # average household usage from energymadeeasy.gov.au.  
 # 4 person household postcode 5051
@@ -217,11 +219,17 @@ eUGE3
 
 # Peak
 
-ggplot(eUGE3, aes(x = as.factor(month), y = peak_perday, colour = year)) +
-  geom_point() +
+#Figured out how join points properly!
+
+ggplot(eUGE3, aes(x = as.factor(month), y = peak_perday, colour = year, group = year)) +
+  geom_point(size = 4, alpha = 0.7) +
   labs(x = "Month", y = "kWh per day", title = "Peak usage") +
   theme(panel.background = element_rect(fill = "white"),
-        panel.border = element_rect(fill = NA))
+        panel.border = element_rect(fill = NA)) +
+  scale_color_viridis_d() +
+  geom_line()
+
+#Need to update all of the other plots...
 
 ggplot(eUGE3, aes(x = as.factor(month), y = peak_perday, colour = season)) +
   geom_point() +
@@ -234,14 +242,16 @@ ggplot(eUGE3, aes(x = as.factor(month), y = peak_perday, colour = season)) +
 
 # Offpeak
 
-ggplot(eUGE3, aes(x = as.factor(month), y = offpeak_perday, colour = year)) +
-  geom_point() +
+ggplot(eUGE3, aes(x = as.factor(month), y = offpeak_perday, colour = year, group = year)) +
+  geom_point(size = 4, alpha = 0.7) +
   labs(x = "Month", y = "kWh per day", title = "OffPeak usage") +
   theme(panel.background = element_rect(fill = "white"),
-        panel.border = element_rect(fill = NA))
+        panel.border = element_rect(fill = NA)) +
+  scale_color_viridis_d() +
+  geom_line()
 
 ggplot(eUGE3, aes(x = as.factor(month), y = offpeak_perday, colour = season)) +
-  geom_point() +
+  geom_point(aes(size = 1.5, alpha = 0.7)) +
   labs(x = "Month", y = "kWh per day", title = "OffPeak usage") +
   scale_color_manual(values = c("orange","green","red", "blue")) +
   theme(panel.background = element_rect(fill = "white"),
@@ -249,25 +259,30 @@ ggplot(eUGE3, aes(x = as.factor(month), y = offpeak_perday, colour = season)) +
 
 # Total usage
 
-ggplot(eUGE3, aes(x = as.factor(month), y = totalusage_perday, colour = year)) +
-  geom_point() +
+ggplot(eUGE3, aes(x = as.factor(month), y = totalusage_perday, colour = year, group = year)) +
+  geom_point(size = 4, alpha = 0.7) +
   labs(x = "Month", y = "kWh per day", title = "Total usage") +
   theme(panel.background = element_rect(fill = "white"),
-        panel.border = element_rect(fill = NA))
+        panel.border = element_rect(fill = NA)) +
+  scale_color_viridis_d() +
+  geom_line()
 
 ggplot(eUGE3, aes(x = as.factor(month), y = totalusage_perday, colour = season)) +
-  geom_point() +
+  geom_point(size = 4, alpha = 0.5) +
   labs(x = "Month", y = "kWh per day", title = "Total usage") +
   scale_color_manual(values = c("orange","green","red", "blue")) +
   theme(panel.background = element_rect(fill = "white"),
         panel.border = element_rect(fill = NA)) +
-  geom_hline(yintercept = 15.7, linetype =2, colour = "red") + # average for local summer
-  geom_hline(yintercept = 15.5, linetype =2, colour = "orange") + # average for local autumn
-  geom_hline(yintercept = 19.0, linetype =2, colour = "blue") + # average for local winter
-  geom_hline(yintercept = 16.1, linetype =2, colour = "green") + # average for local spring
-  geom_hline(yintercept = 12.9, linetype =4, colour = "black") # average for our household
-
+  geom_hline(aes(yintercept = 15.7, linetype = "Local Summer ave"), colour = "red") + # average for local summer
+  geom_hline(aes(yintercept = 15.5, linetype = "Local Autumn ave"), colour = "orange") + # average for local autumn
+  geom_hline(aes(yintercept = 19.0, linetype = "Local Winter ave"), colour = "blue") + # average for local winter
+  geom_hline(aes(yintercept = 16.1, linetype = "Local Spring ave"), colour = "green") + # average for local spring
+  geom_hline(aes(yintercept = 12.9, linetype = "Our average"), colour = "black") + # average for our household
+  scale_linetype_manual(name = "Average local 4 person household", values = c(2, 2, 2, 2, 2), 
+                          guide = guide_legend(override.aes = list(color = c("orange", "green", "red","blue", "black"))))
+    
 mean(eUGE3 $totalusage_perday)
+
 
 # Energymadeeasy.gov.au household usage 4 person no pool
 #AHsummer <- 15.7
@@ -278,35 +293,62 @@ mean(eUGE3 $totalusage_perday)
 
 # PV
 
-ggplot(eUGE3, aes(x = as.factor(month), y = PVgen_perday, colour = year)) +
-  geom_point() +
+ggplot(eUGE3, aes(x = as.factor(month), y = PVgen_perday, colour = year, group = year)) +
+  geom_point(size = 4, alpha = 0.7) +
   labs(x = "Month", y = "kWh per day", title = "PV generation") +
   theme(panel.background = element_rect(fill = "white"),
-        panel.border = element_rect(fill = NA))
+        panel.border = element_rect(fill = NA)) +
+  scale_color_viridis_d() +
+  geom_line()
 
-ggplot(eUGE3, aes(x = as.factor(month), y = feedin_perday, colour = year)) +
-  geom_point() +
-  labs(x = "Month", y = "kWh per day", title = "PV feed-in") +
+ggplot(eUGE3, aes(x = as.factor(month), y = feedin_perday, colour = year, group = year)) +
+  geom_point(size = 4, alpha = 0.7) +
+  labs(x = "Month", y = "kWh per day", title = "PV feedin") +
   theme(panel.background = element_rect(fill = "white"),
-        panel.border = element_rect(fill = NA))
+        panel.border = element_rect(fill = NA)) +
+  scale_color_viridis_d() +
+  geom_line()
 
-ggplot(eUGE3, aes(x = as.factor(month), y = PVhours_perday, colour = year)) +
-  geom_point() +
+ggplot(eUGE3, aes(x = as.factor(month), y = PVhours_perday, colour = year, group = year)) +
+  geom_point(size = 4, alpha = 0.7) +
   labs(x = "Month", y = "kWh per day", title = "PV hours") +
   theme(panel.background = element_rect(fill = "white"),
-        panel.border = element_rect(fill = NA))
+        panel.border = element_rect(fill = NA)) +
+  scale_color_viridis_d() +
+  geom_line()
 
-ggplot(eUGE3, aes(x = as.factor(month), y = PVefficiency, colour = year)) +
-  geom_point() +
-  labs(x = "Month", y = "kWh per hour", title = "PV generation efficiency") +
+ggplot(eUGE3, aes(x = as.factor(month), y = PVefficiency, colour = year, group = year)) +
+  geom_point(size = 4, alpha = 0.7) +
+  labs(x = "Month", y = "kWh per day", title = "PV generation efficiency") +
+  theme(panel.background = element_rect(fill = "white"),
+        panel.border = element_rect(fill = NA)) +
+  scale_color_viridis_d() +
+  geom_line()
+
+ggplot(eUGE3, aes(x = as.factor(month), y = feedinefficiency, colour = year, group = year)) +
+  geom_point(size = 4, alpha = 0.7) +
+  labs(x = "Month", y = "kWh per day", title = "PV feed-in efficiency") +
+  theme(panel.background = element_rect(fill = "white"),
+        panel.border = element_rect(fill = NA)) +
+  scale_color_viridis_d() +
+  geom_line()
+
+# PV performance - generation
+
+ggplot(eUGE3, aes(x = PVhours_perday, y = PVgen_perday, colour = month)) +
+  geom_point(size = 4, alpha = 0.7) +
+  labs(x = "Hours of operation", y = "kWh generated", title = "PV generation performance") +
   theme(panel.background = element_rect(fill = "white"),
         panel.border = element_rect(fill = NA))
 
-ggplot(eUGE3, aes(x = as.factor(month), y = feedinefficiency, colour = year)) +
-  geom_point() +
-  labs(x = "Month", y = "kWh per hour", title = "PV feed-in efficiency") +
+# PV performance - export
+
+ggplot(eUGE3, aes(x = PVhours_perday, y = feedin_perday, colour = month)) +
+  geom_point(size = 4, alpha = 0.7) +
+  labs(x = "Hours of operation", y = "kWh exported", title = "PV export performance") +
   theme(panel.background = element_rect(fill = "white"),
         panel.border = element_rect(fill = NA))
+
 
  
 write.csv(eUGE3, file = "eUGE3.csv")
@@ -318,6 +360,6 @@ write.csv(eUGE3, file = "eUGE3.csv")
 # Off peak kicks in in summer when visitors are over due to supplementary HWS.
 # PV efficiency dips at he height of summer - sun rises and sets south of E and W.
 # We also have rainfall data, and climate data can be downloaded from BOM. 
-# TOgether with daily (rather than monthly) data, there may be some interesting correlations.
+# Together with daily (rather than monthly) data, there may be some interesting correlations.
 
 
