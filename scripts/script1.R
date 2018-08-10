@@ -171,18 +171,15 @@ eUGE1 <-
 
 # got rid of other data and trimmed to give 9 complete years
 
-monthlist <- c(6,7,8,9,10,11,12,1,2,3,4,5)
-monthlist <- c(monthlist, monthlist)
-monthlist <- c(monthlist,6,7,8,9,10,11,12,1,2,3,4,5)
-monthlist
-
-write.csv(eUGE1, file = "eUGE1.csv")
+monthlist1 <- c(6,7,8,9,10,11,12)
+monthlist2 <- c(1,2,3,4,5,6,7,8,9,10,11,12)
+monthlist3 <- c(1,2,3,4,5)
+monthlist <- c(monthlist1, monthlist2, monthlist2, monthlist2, monthlist2, monthlist2, monthlist2, monthlist2, monthlist2, monthlist3)
 
 # Make eUGE2 which has a month list
 
 eUGE2 <- eUGE1 %>% 
   mutate(month = as.factor(monthlist))
-eUGE2
 
 # Make a year list
 yearlist1 <- c(2009,2009,2009,2009,2009,2009,2009)
@@ -197,7 +194,6 @@ yearlist9 <- yearlist2 + 7
 yearlist10 <- c(2018,2018,2018,2018,2018)
 
 yearlist <- c(yearlist1,yearlist2,yearlist3,yearlist4,yearlist5,yearlist6,yearlist7,yearlist8,yearlist9,yearlist10)
-yearlist
 
 # Add year list to eUGE2
 
@@ -265,11 +261,13 @@ ggplot(eUGE3, aes(x = as.factor(month), y = totalusage_perday, colour = season))
   scale_color_manual(values = c("orange","green","red", "blue")) +
   theme(panel.background = element_rect(fill = "white"),
         panel.border = element_rect(fill = NA)) +
-  geom_hline(yintercept = 15.7, linetype =2, colour = "red") +
-  geom_hline(yintercept = 15.5, linetype =2, colour = "orange") +
-  geom_hline(yintercept = 19.0, linetype =2, colour = "blue") +
-  geom_hline(yintercept = 16.1, linetype =2, colour = "green") +
-  geom_hline(yintercept = 16.5, linetype =2, colour = "black")
+  geom_hline(yintercept = 15.7, linetype =2, colour = "red") + # average for local summer
+  geom_hline(yintercept = 15.5, linetype =2, colour = "orange") + # average for local autumn
+  geom_hline(yintercept = 19.0, linetype =2, colour = "blue") + # average for local winter
+  geom_hline(yintercept = 16.1, linetype =2, colour = "green") + # average for local spring
+  geom_hline(yintercept = 12.9, linetype =4, colour = "black") # average for our household
+
+mean(eUGE3 $totalusage_perday)
 
 # Energymadeeasy.gov.au household usage 4 person no pool
 #AHsummer <- 15.7
@@ -309,6 +307,7 @@ ggplot(eUGE3, aes(x = as.factor(month), y = feedinefficiency, colour = year)) +
   labs(x = "Month", y = "kWh per hour", title = "PV feed-in efficiency") +
   theme(panel.background = element_rect(fill = "white"),
         panel.border = element_rect(fill = NA))
+
  
 write.csv(eUGE3, file = "eUGE3.csv")
 
