@@ -2,7 +2,9 @@
 title: "eUGE - **e**lectricity **U**se **G**eneration and **E**xport"
 author: "Ryan Farquharson"
 date: "9 August 2018"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 Being a closet greenie, and a scientist, I have been fascinated by energy and water use.  Many people decry the cost of utilities with little to no understanding of how much they use, nor how much they waste.  An almost daily ritual for me is to wander up to the water meter, then down to the rain gauge, and back up to the electricity meter and record all the numbers, by hand, into an exercise book. I have around a thousand entries. Until now, I have done little with that data.  

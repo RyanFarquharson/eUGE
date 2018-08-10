@@ -68,6 +68,12 @@ usage <- usage %>%
 
 usage <- slice(usage, -1)
 
+usage <- slice(usage, -110)
+
+usage <- slice(usage, -109)
+
+usage
+
 # make a new table called perday.  divide usage by number of days to get usage per day.
 
 perday <- usage %>% 
@@ -138,7 +144,7 @@ ggplot(perday, aes(x = date)) +
   geom_line(aes(y = PVefficiency, colour = "PV generation efficiency")) +
   geom_line(aes(y = feedinefficiency, colour = "feed-in efficiency")) +
   labs(x = "Date", y = "kwh per hour", title = "PV efficiency") +
-  scale_color_manual(values = c("black","green")) +
+  scale_color_manual(values = c("black","blue")) +
   theme(panel.background = element_rect(fill = "white"),
         panel.border = element_rect(fill = NA))
 
@@ -158,25 +164,27 @@ mean(perday$totalusage_perday, na.rm = TRUE)
 
 # I feel the need to clean out the unnecesary data and make a new table.
 
-eUGE <-  
+eUGE1 <-  
   select(perday,"date","peak_perday","offpeak_perday","totalusage_perday",
          "PVgen_perday","feedin_perday","PVhours_perday","PVefficiency", "feedinefficiency")
-eUGE1
 
-eUGE1 <- select(eUGE1, -"month")
+
+# got rid of other data and trimmed to give 9 complete years
 
 monthlist <- c(6,7,8,9,10,11,12,1,2,3,4,5)
 monthlist <- c(monthlist, monthlist)
 monthlist <- c(monthlist,6,7,8,9,10,11,12,1,2,3,4,5)
 monthlist
 
-eUGE1 <- slice(eUGE1, -109)
-
 write.csv(eUGE1, file = "eUGE1.csv")
 
-eUGE2 <- eUGE1 %>% 
-  mutate(month = monthlist)
+# Make eUGE2 which has a month list
 
+eUGE2 <- eUGE1 %>% 
+  mutate(month = as.factor(monthlist))
+eUGE2
+
+# Make a year list
 yearlist1 <- c(2009,2009,2009,2009,2009,2009,2009)
 yearlist2 <- c(2010,2010,2010,2010,2010,2010,2010,2010,2010,2010,2010,2010)
 yearlist3 <- yearlist2 + 1
@@ -191,50 +199,118 @@ yearlist10 <- c(2018,2018,2018,2018,2018)
 yearlist <- c(yearlist1,yearlist2,yearlist3,yearlist4,yearlist5,yearlist6,yearlist7,yearlist8,yearlist9,yearlist10)
 yearlist
 
+# Add year list to eUGE2
+
+eUGE2 <- eUGE2 %>% 
+  mutate(year = as.factor(yearlist))
+
+# Make a season list
+
+seasonlist1 <- c('Winter', 'Winter', 'Winter', 'Spring', 'Spring', 'Spring', 'Summer')
+seasonlist2 <- c('Summer', 'Summer', 'Autumn', 'Autumn', 'Autumn')
+seasonlist3 <- c(seasonlist2, seasonlist1)
+seasonlist <- c(seasonlist1, seasonlist3, seasonlist3, seasonlist3, seasonlist3, seasonlist3, seasonlist3, seasonlist3, seasonlist3, seasonlist2)
+seasonlist
+
 eUGE3 <- eUGE2 %>% 
-  mutate(year = yearlist)
+  mutate(season = as.factor(seasonlist))
+
+eUGE3
+
+# Some more exploratory plots.  Need to figure out how to get a better colour scheme.
+
+# Peak
 
 ggplot(eUGE3, aes(x = as.factor(month), y = peak_perday, colour = year)) +
   geom_point() +
+  labs(x = "Month", y = "kWh per day", title = "Peak usage") +
   theme(panel.background = element_rect(fill = "white"),
         panel.border = element_rect(fill = NA))
+
+ggplot(eUGE3, aes(x = as.factor(month), y = peak_perday, colour = season)) +
+  geom_point() +
+  labs(x = "Month", y = "kWh per day", title = "Peak usage") +
+  scale_color_manual(values = c("orange","green","red", "blue")) +
+  theme(panel.background = element_rect(fill = "white"),
+        panel.border = element_rect(fill = NA))
+
+#ggsave(AugustWithoutOutlier, path = "~/results/")
+
+# Offpeak
 
 ggplot(eUGE3, aes(x = as.factor(month), y = offpeak_perday, colour = year)) +
   geom_point() +
+  labs(x = "Month", y = "kWh per day", title = "OffPeak usage") +
   theme(panel.background = element_rect(fill = "white"),
         panel.border = element_rect(fill = NA))
+
+ggplot(eUGE3, aes(x = as.factor(month), y = offpeak_perday, colour = season)) +
+  geom_point() +
+  labs(x = "Month", y = "kWh per day", title = "OffPeak usage") +
+  scale_color_manual(values = c("orange","green","red", "blue")) +
+  theme(panel.background = element_rect(fill = "white"),
+        panel.border = element_rect(fill = NA))
+
+# Total usage
 
 ggplot(eUGE3, aes(x = as.factor(month), y = totalusage_perday, colour = year)) +
   geom_point() +
+  labs(x = "Month", y = "kWh per day", title = "Total usage") +
   theme(panel.background = element_rect(fill = "white"),
         panel.border = element_rect(fill = NA))
 
+ggplot(eUGE3, aes(x = as.factor(month), y = totalusage_perday, colour = season)) +
+  geom_point() +
+  labs(x = "Month", y = "kWh per day", title = "Total usage") +
+  scale_color_manual(values = c("orange","green","red", "blue")) +
+  theme(panel.background = element_rect(fill = "white"),
+        panel.border = element_rect(fill = NA)) +
+  geom_hline(yintercept = 15.7, linetype =2, colour = "red") +
+  geom_hline(yintercept = 15.5, linetype =2, colour = "orange") +
+  geom_hline(yintercept = 19.0, linetype =2, colour = "blue") +
+  geom_hline(yintercept = 16.1, linetype =2, colour = "green") +
+  geom_hline(yintercept = 16.5, linetype =2, colour = "black")
+
+# Energymadeeasy.gov.au household usage 4 person no pool
+#AHsummer <- 15.7
+#AHautumn <- 15.5
+#AHwinter <- 19.0
+#AHspring <- 16.1
+#AHave <- 16.5
+
+# PV
+
 ggplot(eUGE3, aes(x = as.factor(month), y = PVgen_perday, colour = year)) +
   geom_point() +
+  labs(x = "Month", y = "kWh per day", title = "PV generation") +
   theme(panel.background = element_rect(fill = "white"),
         panel.border = element_rect(fill = NA))
 
 ggplot(eUGE3, aes(x = as.factor(month), y = feedin_perday, colour = year)) +
   geom_point() +
+  labs(x = "Month", y = "kWh per day", title = "PV feed-in") +
   theme(panel.background = element_rect(fill = "white"),
         panel.border = element_rect(fill = NA))
 
 ggplot(eUGE3, aes(x = as.factor(month), y = PVhours_perday, colour = year)) +
   geom_point() +
+  labs(x = "Month", y = "kWh per day", title = "PV hours") +
   theme(panel.background = element_rect(fill = "white"),
         panel.border = element_rect(fill = NA))
 
 ggplot(eUGE3, aes(x = as.factor(month), y = PVefficiency, colour = year)) +
   geom_point() +
+  labs(x = "Month", y = "kWh per hour", title = "PV generation efficiency") +
   theme(panel.background = element_rect(fill = "white"),
         panel.border = element_rect(fill = NA))
 
 ggplot(eUGE3, aes(x = as.factor(month), y = feedinefficiency, colour = year)) +
   geom_point() +
+  labs(x = "Month", y = "kWh per hour", title = "PV feed-in efficiency") +
   theme(panel.background = element_rect(fill = "white"),
         panel.border = element_rect(fill = NA))
-
-
+ 
+write.csv(eUGE3, file = "eUGE3.csv")
 
 # It's interesting to note that a few things have happened in our household
 # 1st child was born July 2011.  An RCAC was installed that summer.
