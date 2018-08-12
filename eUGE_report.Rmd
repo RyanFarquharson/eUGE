@@ -3,12 +3,13 @@ title: "eUGE - **e**lectricity **U**se **G**eneration and **E**xport"
 author: "Ryan Farquharson"
 date: "9 August 2018"
 output:
+  pdf_document: default
   html_document: default
 ---
 
 Being a closet greenie, and a scientist, I am fascinated by household energy and water use.  Many people decry the cost of utilities with little to no understanding of how much they use, nor how much they waste.  An almost daily ritual for me is to wander up to the water meter, then down to the rain gauge, and back up to the electricity meter and record all the numbers, by hand, into an exercise book. I have thousands of entries. Until now, I have done little with that data.  
 
-Here I've taken the oportunity to hone some skills in data exploration and visualisation, plus setting up file structures, version control and doing some simple calcualtions etc. in R.  Wat's more, I've put together this report using R markdown which is proving to be very powerful.  What is described here is not necessarily the best way to do things.  I learn better from playing and making mistakes than I do from following recipes.  So let's say this has been a good learning experience!
+Here I've taken the oportunity to hone some skills in data exploration and visualisation, plus setting up file structures, version control and doing some simple calcualtions etc. in R.  What's more, I've put together this report using R markdown which is proving to be very powerful.  What is described here is not necessarily the best way to do things.  I learn better from playing and making mistakes than I do from following recipes.  So let's say this has been a good learning experience!
 
 #### Meter readings:
 
