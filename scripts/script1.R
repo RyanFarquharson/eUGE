@@ -130,6 +130,9 @@ ggplot(perday, aes(x = date)) +
 # 4 person household postcode 5051
 # Summer 15.7; Autumn 15.5; WInter 19.0; Spring 16.1 kWh 
 
+
+# More PV plots
+
 ggplot(perday, aes(x = date, y = PVefficiency)) + 
   geom_line() +
   labs(x = "Date", y = "kwh per hour", title = "PV efficiency") +
@@ -218,7 +221,6 @@ eUGE3
 # Some more exploratory plots.  Need to figure out how to get a better colour scheme.
 
 # Peak
-
 #Figured out how join points properly!
 
 ggplot(eUGE3, aes(x = as.factor(month), y = peak_perday, colour = year, group = year)) +
@@ -229,10 +231,9 @@ ggplot(eUGE3, aes(x = as.factor(month), y = peak_perday, colour = year, group = 
   scale_color_viridis_d() +
   geom_line()
 
-#Need to update all of the other plots...
-
+# Peak by season
 ggplot(eUGE3, aes(x = as.factor(month), y = peak_perday, colour = season)) +
-  geom_point() +
+  geom_point(size = 4, alpha = 0.7) +
   labs(x = "Month", y = "kWh per day", title = "Peak usage") +
   scale_color_manual(values = c("orange","green","red", "blue")) +
   theme(panel.background = element_rect(fill = "white"),
@@ -251,7 +252,7 @@ ggplot(eUGE3, aes(x = as.factor(month), y = offpeak_perday, colour = year, group
   geom_line()
 
 ggplot(eUGE3, aes(x = as.factor(month), y = offpeak_perday, colour = season)) +
-  geom_point(aes(size = 1.5, alpha = 0.7)) +
+  geom_point(size = 4, alpha = 0.7) +
   labs(x = "Month", y = "kWh per day", title = "OffPeak usage") +
   scale_color_manual(values = c("orange","green","red", "blue")) +
   theme(panel.background = element_rect(fill = "white"),
@@ -281,17 +282,19 @@ ggplot(eUGE3, aes(x = as.factor(month), y = totalusage_perday, colour = season))
   scale_linetype_manual(name = "Average local 4 person household", values = c(2, 2, 2, 2, 2), 
                           guide = guide_legend(override.aes = list(color = c("orange", "green", "red","blue", "black"))))
     
+
+# Energymadeeasy.gov.au household usage 4 person no pool
+# AHsummer <- 15.7
+# AHautumn <- 15.5
+# AHwinter <- 19.0
+# AHspring <- 16.1
+# AHave <- 16.5
+# OUr average
+
 mean(eUGE3 $totalusage_perday)
 
 
-# Energymadeeasy.gov.au household usage 4 person no pool
-#AHsummer <- 15.7
-#AHautumn <- 15.5
-#AHwinter <- 19.0
-#AHspring <- 16.1
-#AHave <- 16.5
-
-# PV
+# PV generation
 
 ggplot(eUGE3, aes(x = as.factor(month), y = PVgen_perday, colour = year, group = year)) +
   geom_point(size = 4, alpha = 0.7) +
@@ -301,13 +304,17 @@ ggplot(eUGE3, aes(x = as.factor(month), y = PVgen_perday, colour = year, group =
   scale_color_viridis_d() +
   geom_line()
 
+# PV export
+
 ggplot(eUGE3, aes(x = as.factor(month), y = feedin_perday, colour = year, group = year)) +
   geom_point(size = 4, alpha = 0.7) +
-  labs(x = "Month", y = "kWh per day", title = "PV feedin") +
+  labs(x = "Month", y = "kWh per day", title = "PV export") +
   theme(panel.background = element_rect(fill = "white"),
         panel.border = element_rect(fill = NA)) +
   scale_color_viridis_d() +
   geom_line()
+
+# PV hours 
 
 ggplot(eUGE3, aes(x = as.factor(month), y = PVhours_perday, colour = year, group = year)) +
   geom_point(size = 4, alpha = 0.7) +
@@ -317,6 +324,8 @@ ggplot(eUGE3, aes(x = as.factor(month), y = PVhours_perday, colour = year, group
   scale_color_viridis_d() +
   geom_line()
 
+# PV generation efficiency
+
 ggplot(eUGE3, aes(x = as.factor(month), y = PVefficiency, colour = year, group = year)) +
   geom_point(size = 4, alpha = 0.7) +
   labs(x = "Month", y = "kWh per day", title = "PV generation efficiency") +
@@ -324,6 +333,8 @@ ggplot(eUGE3, aes(x = as.factor(month), y = PVefficiency, colour = year, group =
         panel.border = element_rect(fill = NA)) +
   scale_color_viridis_d() +
   geom_line()
+
+# PV export efficiency
 
 ggplot(eUGE3, aes(x = as.factor(month), y = feedinefficiency, colour = year, group = year)) +
   geom_point(size = 4, alpha = 0.7) +
@@ -340,6 +351,15 @@ ggplot(eUGE3, aes(x = PVhours_perday, y = PVgen_perday, colour = month)) +
   labs(x = "Hours of operation", y = "kWh generated", title = "PV generation performance") +
   theme(panel.background = element_rect(fill = "white"),
         panel.border = element_rect(fill = NA))
+
+
+ggplot(eUGE3, aes(x = PVhours_perday, y = PVgen_perday, colour = month, group = year)) +
+  geom_point(size = 4, alpha = 0.7) +
+  labs(x = "Hours of operation", y = "kWh generated", title = "PV generation performance") +
+  theme(panel.background = element_rect(fill = "white"),
+        panel.border = element_rect(fill = NA)) +
+  geom_line()
+
 
 # PV performance - export
 
