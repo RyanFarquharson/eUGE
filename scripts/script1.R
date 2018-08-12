@@ -104,67 +104,6 @@ perday <- perday %>%
   mutate(feedinefficiency = feedin_perday / PVhours_perday)
 
 perday
-
-# lets try plotting this stuff...
-
-# Electricity overview in kwh per day
-# How to put hlines with legends in
-ggplot(perday, aes(x = date)) + 
-  geom_line(aes(y = peak_perday, colour = "peak")) +
-  geom_line(aes(y = offpeak_perday, colour = "offpeak")) +
-  geom_line(aes(y = PVgen_perday, colour = "PV generation")) +
-  geom_line(aes(y = feedin_perday, colour = "PV feed-in")) +
-  geom_line(aes(y = totalusage_perday, colour = "Total usage")) +
-  labs(x = "Date", y = "kwh per day", title = "Electricity use, generation and export", colour = "Electricity usage/generation") +
-  scale_color_manual(values = c("blue","red","green","black", "orange")) +
-  geom_hline(aes(yintercept = 15.5, linetype = "Autumn"), colour = "orange") + 
-  geom_hline(aes(yintercept = 19, linetype = "Winter"), colour = "blue") +
-  geom_hline(aes(yintercept = 12.9, linetype = "Our household"), colour = "black") +
-  theme(panel.background = element_rect(fill = "white"),
-        panel.border = element_rect(fill = NA)) +
-  scale_linetype_manual(name = "Average local 4 person household", values = c(2, 2, 2), 
-                        guide = guide_legend(override.aes = list(color = c("orange", "black", "blue"))))
-
-
-# average household usage from energymadeeasy.gov.au.  
-# 4 person household postcode 5051
-# Summer 15.7; Autumn 15.5; WInter 19.0; Spring 16.1 kWh 
-
-
-# More PV plots
-
-ggplot(perday, aes(x = date, y = PVefficiency)) + 
-  geom_line() +
-  labs(x = "Date", y = "kwh per hour", title = "PV efficiency") +
-  theme(panel.background = element_rect(fill = "white"),
-        panel.border = element_rect(fill = NA))
-
-ggplot(perday, aes(x = date, y = feedinefficiency)) + 
-  geom_line() +
-  labs(x = "Date", y = "kwh per hour", title = "feedin efficiency") +
-  theme(panel.background = element_rect(fill = "white"),
-        panel.border = element_rect(fill = NA))
-
-ggplot(perday, aes(x = date)) + 
-  geom_line(aes(y = PVefficiency, colour = "PV generation efficiency")) +
-  geom_line(aes(y = feedinefficiency, colour = "feed-in efficiency")) +
-  labs(x = "Date", y = "kwh per hour", title = "PV efficiency") +
-  scale_color_manual(values = c("black","blue")) +
-  theme(panel.background = element_rect(fill = "white"),
-        panel.border = element_rect(fill = NA))
-
-# Water use
-
-ggplot(perday, aes(x = date, y = water_perday)) + 
-  geom_line() +
-  labs(x = "Date", y = "litres per day", title = "Water usage") +
-  geom_hline(yintercept=740) +
-  theme(panel.background = element_rect(fill = "white"),
-        panel.border = element_rect(fill = NA))
-
-# have put in some hlines to give seasonal averages for usage of 4 person households
-# calculate average total usage per day and add in an hline.
-
 mean(perday$totalusage_perday, na.rm = TRUE)
 
 # I feel the need to clean out the unnecesary data and make a new table.
@@ -217,6 +156,68 @@ eUGE3 <- eUGE2 %>%
   mutate(season = as.factor(seasonlist))
 
 eUGE3
+
+
+# lets try plotting this stuff...
+
+# Electricity overview in kwh per day
+# How to put hlines with legends in
+
+ggplot(eUGE3, aes(x = as.factor(month), y = totalusage_perday, colour = season)) +
+  geom_point(size = 4, alpha = 0.5) +
+  labs(x = "Month", y = "kWh per day", title = "Total usage") +
+  scale_color_manual(values = c("orange","green","red", "blue")) +
+  theme(panel.background = element_rect(fill = "white"),
+        panel.border = element_rect(fill = NA)) +
+  geom_hline(aes(yintercept = 15.7, linetype = "Local Summer ave"), colour = "red") + # average for local summer
+  geom_hline(aes(yintercept = 15.5, linetype = "Local Autumn ave"), colour = "orange") + # average for local autumn
+  geom_hline(aes(yintercept = 19.0, linetype = "Local Winter ave"), colour = "blue") + # average for local winter
+  geom_hline(aes(yintercept = 16.1, linetype = "Local Spring ave"), colour = "green") + # average for local spring
+  geom_hline(aes(yintercept = 12.9, linetype = "Our average"), colour = "black") + # average for our household
+  scale_linetype_manual(name = "Average local 4 person household", values = c(2, 2, 2, 2, 2), 
+                        guide = guide_legend(override.aes = list(color = c("orange", "green", "red","blue", "black"))))
+
+
+# average household usage from energymadeeasy.gov.au.  
+# 4 person household postcode 5051
+# Summer 15.7; Autumn 15.5; WInter 19.0; Spring 16.1 kWh 
+
+
+# More PV plots
+
+ggplot(perday, aes(x = date, y = PVefficiency)) + 
+  geom_line() +
+  labs(x = "Date", y = "kwh per hour", title = "PV efficiency") +
+  theme(panel.background = element_rect(fill = "white"),
+        panel.border = element_rect(fill = NA))
+
+ggplot(perday, aes(x = date, y = feedinefficiency)) + 
+  geom_line() +
+  labs(x = "Date", y = "kwh per hour", title = "feedin efficiency") +
+  theme(panel.background = element_rect(fill = "white"),
+        panel.border = element_rect(fill = NA))
+
+ggplot(perday, aes(x = date)) + 
+  geom_line(aes(y = PVefficiency, colour = "PV generation efficiency")) +
+  geom_line(aes(y = feedinefficiency, colour = "feed-in efficiency")) +
+  labs(x = "Date", y = "kwh per hour", title = "PV efficiency") +
+  scale_color_manual(values = c("black","blue")) +
+  theme(panel.background = element_rect(fill = "white"),
+        panel.border = element_rect(fill = NA))
+
+# Water use
+
+ggplot(perday, aes(x = date, y = water_perday)) + 
+  geom_line() +
+  labs(x = "Date", y = "litres per day", title = "Water usage") +
+  geom_hline(yintercept=740) +
+  theme(panel.background = element_rect(fill = "white"),
+        panel.border = element_rect(fill = NA))
+
+# have put in some hlines to give seasonal averages for usage of 4 person households
+# calculate average total usage per day and add in an hline.
+
+
 
 # Some more exploratory plots.  Need to figure out how to get a better colour scheme.
 
@@ -318,7 +319,7 @@ ggplot(eUGE3, aes(x = as.factor(month), y = feedin_perday, colour = year, group 
 
 ggplot(eUGE3, aes(x = as.factor(month), y = PVhours_perday, colour = year, group = year)) +
   geom_point(size = 4, alpha = 0.7) +
-  labs(x = "Month", y = "kWh per day", title = "PV hours") +
+  labs(x = "Month", y = "PV hours per day", title = "PV hours") +
   theme(panel.background = element_rect(fill = "white"),
         panel.border = element_rect(fill = NA)) +
   scale_color_viridis_d() +
