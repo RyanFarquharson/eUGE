@@ -3,33 +3,7 @@ library(tidyverse)
 meterreads <- read_csv("data/meterreads.csv")
 meterreads
 
-#plot power reads i.e. peak, offpeak and PV
 
-ggplot(meterreads, aes(x = date)) + 
-  geom_line(aes(y = peak_reading, colour = "peak")) +
-  geom_line(aes(y = offpeak_reading, colour = "offpeak")) +
-  geom_line(aes(y = PV_reading, colour = "PV")) +
-  geom_line(aes(y = feedin_reading, colour = "PV feed-in")) +
-  labs(x = "Date", y = "kwh", title = "Power reads", colour = "Read type") +
-  scale_color_manual(values = c("blue","red","green","black")) +
-  theme(panel.background = element_rect(fill = "white"),
-        panel.border = element_rect(fill = NA))
-
-# plot PV hours in a seperate graph
-
-ggplot(meterreads, aes(x = date, y = PVhours_reading)) +
-  geom_line() +
-  labs(x = "Date", y = "hours", title = "PVhours") +
-  theme(panel.background = element_rect(fill = "white"),
-        panel.border = element_rect(fill = NA))
-
-# plot water reading in a seperate graph
-
-ggplot(meterreads, aes(x = date, y = water_reading)) + 
-  geom_line() +
-  labs(x = "Date", y = "litres", title = "Water") +
-  theme(panel.background = element_rect(fill = "white"),
-        panel.border = element_rect(fill = NA))
 
 # make a new tibble called 'usage' from 'meterreads' and
 # add a column called peak_usage by using mutate and lag
@@ -159,6 +133,34 @@ eUGE3
 
 
 # lets try plotting this stuff...
+
+#plot power reads i.e. peak, offpeak and PV
+
+ggplot(meterreads, aes(x = date)) + 
+  geom_line(aes(y = peak_reading, colour = "peak")) +
+  geom_line(aes(y = offpeak_reading, colour = "offpeak")) +
+  geom_line(aes(y = PV_reading, colour = "PV")) +
+  geom_line(aes(y = feedin_reading, colour = "PV feed-in")) +
+  labs(x = "Date", y = "kwh", title = "Power reads", colour = "Read type") +
+  scale_color_manual(values = c("blue","red","green","black")) +
+  theme(panel.background = element_rect(fill = "white"),
+        panel.border = element_rect(fill = NA))
+
+# plot PV hours in a seperate graph
+
+ggplot(meterreads, aes(x = date, y = PVhours_reading)) +
+  geom_line() +
+  labs(x = "Date", y = "hours", title = "PVhours") +
+  theme(panel.background = element_rect(fill = "white"),
+        panel.border = element_rect(fill = NA))
+
+# plot water reading in a seperate graph
+
+ggplot(meterreads, aes(x = date, y = water_reading)) + 
+  geom_line() +
+  labs(x = "Date", y = "litres", title = "Water") +
+  theme(panel.background = element_rect(fill = "white"),
+        panel.border = element_rect(fill = NA))
 
 # Electricity overview in kwh per day
 # How to put hlines with legends in
@@ -370,8 +372,7 @@ ggplot(eUGE3, aes(x = PVhours_perday, y = feedin_perday, colour = month)) +
   theme(panel.background = element_rect(fill = "white"),
         panel.border = element_rect(fill = NA))
 
-
- 
+write.csv(eUGE1, file = "eUGE1.csv")
 write.csv(eUGE3, file = "eUGE3.csv")
 
 # It's interesting to note that a few things have happened in our household
