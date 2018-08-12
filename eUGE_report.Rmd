@@ -10,8 +10,6 @@ Being a closet greenie, and a scientist, I am fascinated by household energy and
 
 Here I've taken the oportunity to hone some skills in data exploration and visualisation, plus setting up file structures, version control and doing some simple calcualtions etc. in R.  Wat's more, I've put together this report using R markdown which is proving to be very powerful.  What is described here is not necessarily the best way to do things.  I learn better from playing and making mistakes than I do from following recipes.  So let's say this has been a good learning experience!
 
-### Methods
-
 #### Meter readings:
 
 Meter readings were recorded by hand at the end of each day, whenever possible, from May 2009 to present.
@@ -74,7 +72,7 @@ ggplot(meterreads, aes(x = date)) +
 
 So far so good.  You can see the meter reads going up over time with some bumps along the way, and if you look closely enough, some different slopes at different periods of time.
 
-But that hides many stories.  What we actually need is usage - i.e. the increment between each read.
+But from this plot it isn't very easy to pull out the stories.  What we actually need is usage - i.e. the increment between each read.
 
 The first step to get usage is to get the diffence in each meter read from the previous reading.  To do this, I used mutate() and lag(), which enabled me to add a new column with the lag function allowing me to subtract the same column from itself, but using one row prior.
 
@@ -121,16 +119,17 @@ usage <- slice(usage, -110)
 
 usage <- slice(usage, -109)
 
+# There was probably a quicker way to do this, but for now, it did the trick.  
+
 ```
 
-There was probably a quicker way to do this, but for now, it did the trick.  One problem though, it gives us a bunch of zeros in the first row.  ggplot is smart enough to ignore these zeros, but really I should clean up this data before moving on.  See the last 3 lines where I take a slice of usage except for the first row, then the last 2 rows (to get back to a full 9 years of dat instead of 9 years and two months)
-
+One problem though, it gives us a bunch of zeros in the first row.  ggplot is smart enough to ignore these zeros, but really I should clean up this data before moving on.  
 
 So we now have the increment of power usage, generation and export between meter reads.  
 
 But guess what.  Months have different numbers of days, and I couldn't always do a meter read at the end of the month.  So to compare between months, we need to get usage per day.
 
-This was done by dividing each usage by the number of days in each increment.  Happily because we're using the date dat type, calculating the number of days was a cinch.
+This was done by dividing each usage by the number of days in each increment.  Happily because we're using the date data type, calculating the number of days was a cinch.
 
 ```{r getting per day data from usage, echo = FALSE}
 # make a new table called perday.  divide usage by number of days to get usage per day.
@@ -164,7 +163,7 @@ perday <- perday %>%
 
 ```
 
-Ok. Now we have something meaningful to work with.  I did some more cleaning up by removing unnecessary intermediary columns and made a table called eUGE3 with months, years and seasons as factors.  Unfotunately, becaus I'm a newbie, I couldn't figure out a quick way to find the month which ends closest to each read date, so I just made some month, year and season lists and added them using mutate.
+Ok. Now we have something meaningful to work with.  I did some more cleaning up by removing unnecessary intermediary columns and made a table called eUGE3 with months, years and seasons as factors.  Unfotunately, because I'm a newbie, I couldn't figure out a quick way to find the month which ends closest to each read date, so I just made some month, year and season lists and added them to the tibble using mutate.
 
 ```{r making eUGE tables, echo = FALSE}
 
@@ -217,13 +216,13 @@ eUGE3 <- eUGE2 %>%
 ```
 
 
-SO now, we're pretty much done wiht the data manipulation.  This is about to get exciting!  Having recored all of this data over 9 years, we're about to see what it looks like.
+So now, we're pretty much done wiht the data manipulation.  This is about to get exciting!  Having recored all of this data over 9 years, we're about to see what it looks like.
 
 Let's do some exploration first.
 
 ### Data exploration
 
-Some time ago, before it became cool, and then became a money making exercise for the wealthy, we installed a small (1 kW) photovoltaic system connected to the grid.  SO now first up we're going to look at how it is performing.
+Some time ago, before it became cool, and then became a money making exercise for the wealthy, we installed a small (1 kW) photovoltaic system connected to the grid.  First up, we're going to look at how the PV system is performing.
 
 ```{r PV plots, echo = FALSE}
 
@@ -245,9 +244,9 @@ ggplot(eUGE3, aes(x = as.factor(month), y = feedin_perday, colour = year, group 
 
 ```
 
-Note the seasonality.  As to be expected, we're generating and exporting much more elctricity in summer than in winter.  Note that the spread in the export data is greater than for the generation data.  Again, this makes sense because over the years, the amount of the generated electricity that we consume within the household has varied.
+Note the seasonality.  As to be expected, we're generating and exporting much more elctricity in summer than in winter.  Note that the spread in the export data over summer is greater than for the generation data.  Again, this makes sense because over the years, the amount of the generated electricity that we consume within the household has varied.
 
-We can look at performance by plotting PV generation of feed-in against hours of operation.
+We can look at performance by plotting PV generation and export against hours of operation.
 
 ```{r PV performance, echo = FALSE}
 
@@ -289,7 +288,11 @@ ggplot(perday, aes(x = date)) +
 
 ```
 
-Here, PV efficiency is the amount of electricity that our teeny weeny 1 kW PV system generates per hour of operation.  In summer we're getting around 0.3 kW per hour.  Winter looks depressing, doesn't it?  Wondering what that dip in the middle of summer is?  High temperatures do lead to lower panel performance.  It would be interesting to get some temperature data and do some comparisons.  Another explanation is that the panels face north and are tilted to get better mid-year performance. We also have large trees east and west.  So during the long summer days when the sun rises in the south-east and sets and the south-west, there are many daylight hours when the inverter is working but there isn't any direct light on the panels.  Don't you love visualisation?
+Here, PV efficiency is the amount of electricity that our teeny weeny 1 kW PV system generates per hour of operation.  In summer we're getting around 0.3 kW per hour.  Winter looks depressing, doesn't it?  
+
+Wondering what that dip in the middle of summer is?  High temperatures do lead to lower panel performance.  It would be interesting to get some temperature data and do some comparisons.  Another explanation is that the panels face north and are tilted to get better mid-year performance. We also have large trees east and west.  So during the long summer days when the sun rises in the south-east and sets and the south-west, there are many daylight hours when the inverter is working but there isn't any direct light on the panels.  
+
+Don't you love visualisation?
 
 Now let's take a look at consumption.
 
@@ -321,13 +324,12 @@ ggplot(eUGE3, aes(x = as.factor(month), y = offpeak_perday, colour = year, group
   geom_line()
 ```
 
-And for off-peak electricity, you can see our reliance on an off-peak heat pump in the early years, with less reliance in middle years due to the RC AC.  More recently we have been playing with a mix of heat pump and heat bank as our occupancy patterns change and we rely on that beautiful radiant heat from the heat bank to dry our towels and washing overnight.
+And for off-peak electricity, you can see our reliance on an off-peak heat pump in the early years, with less reliance in middle years due to the RC AC.  More recently we have been playing with a mix of heat pump and heat bank in winter as our occupancy patterns change and we rely on that beautiful radiant heat from the heat bank to dry our towels and washing overnight.
 
 So how do we compare to other households in our area?
 
 
 ```{r total usage, echo = FALSE}
-
 
 ggplot(eUGE3, aes(x = as.factor(month), y = totalusage_perday, colour = season)) +
   geom_point(size = 4, alpha = 0.5) +
@@ -342,15 +344,15 @@ ggplot(eUGE3, aes(x = as.factor(month), y = totalusage_perday, colour = season))
   geom_hline(aes(yintercept = 12.9, linetype = "Our average"), colour = "black") + # average for our household
   scale_linetype_manual(name = "Average local 4 person household", values = c(2, 2, 2, 2, 2), 
                           guide = guide_legend(override.aes = list(color = c("orange", "green", "red","blue", "black"))))
-    
 
 ```
 
 This is a plot of our total usage (peak + off-peak) over the 12 months of the year, for all of the 9 years.  I've grouped by season to enable a comparison to an average 4 person household in our area, represented by the horizontal lines.  The data are from http://energymadeeasy.gov.au.  The black line represents the average for our household for the whole year.  As you can see, we do pretty well, especially considering that we live in an old, leaky, weatherboard cottage and we are entirely reliant on electricity for our household energy, with excpetion of the occasional bbq, wok cooking and chimenea.
 
-SO as you can see, there are many stories to be told.  
+As you can see, there are many stories to be told.  
 
-If was was limited to only 1 figure, this is what it woudl look like.
+Part of my task was to generate one final image.  If I was limited to only 1 figure, I'd want to caputre all of the data.  I got close.  This is what it would look like.
+
 Get ready for it... this is 'eUGE' !
 
 ## eUGE
@@ -430,7 +432,7 @@ We can do the same for water usage and rainfall, given that we have a tank plumb
 
 The modeller in me wants to go crazy with it.  I'm resisting that urge, for now, anyway.
  
-As we plan our new energy efficient house, we are considering heating options.  Do we need to fork out big $ for a very efficient, effective and somewhat luxurious in-slab hydronic heating system?  Do we suffice with a wood oven?  What about salvaging our heat pump and heat bank be enough?  Will we even need heating at all?
+As we plan our new energy efficient house, we are considering heating options.  Do we need to fork out big $ for a very efficient, effective and somewhat luxurious in-slab hydronic heating system?  Do we suffice with a wood oven?  Would salvaging our existing heat pump and heat bank be enough?  Will we even need heating at all?
 
 Whatever we end up with, rest assured that I will continue to record our meter readings and get back to you with some interesting comparisons, no doubt.  Hopefully it won't take me another 9 years!
 
