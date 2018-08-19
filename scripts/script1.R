@@ -146,6 +146,18 @@ ggplot(meterreads, aes(x = date)) +
   theme(panel.background = element_rect(fill = "white"),
         panel.border = element_rect(fill = NA))
 
+# repeat above plot using gather
+
+meterreads %>% 
+  gather(Type, value, peak_reading, offpeak_reading, PV_reading, feedin_reading) %>% 
+  ggplot(aes(date, value, colour = Type)) +
+  geom_line() +
+  scale_colour_manual(values = c("blue","red","green","black")) +
+  theme(panel.background = element_rect(fill = "white"),
+        panel.border = element_rect(fill = NA))
+
+
+
 # plot PV hours in a seperate graph
 
 ggplot(meterreads, aes(x = date, y = PVhours_reading)) +
