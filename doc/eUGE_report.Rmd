@@ -348,11 +348,9 @@ ggplot(eUGE3, aes(x = as.factor(month), y = totalusage_perday, colour = season))
 
 ```
 
-This is a plot of our total usage (peak + off-peak) over the 12 months of the year, for all of the 9 years.  I've grouped by season to enable a comparison to an average 4 person household in our area, represented by the horizontal lines.  The data are from http://energymadeeasy.gov.au.  The black line represents the average for our household for the whole year.  As you can see, we do pretty well, especially considering that we live in an old, leaky, weatherboard cottage and we are entirely reliant on electricity for our household energy, with excpetion of the occasional bbq, wok cooking and chimenea.
+This is a plot of our total usage (peak + off-peak) over the 12 months of the year, for all of the 9 years.  I've grouped by season to enable a comparison to an average 4 person household in our area, represented by the horizontal lines.  The data are from http://energymadeeasy.gov.au.  The black line represents the average for our household for the whole year.  Over the full year we do pretty well, especially considering that we live in an old, leaky, weatherboard cottage and we are entirely reliant on electricity for our household energy, with excpetion of the occasional bbq, wok cooking and chimenea.  But note the seasonality.  We're well above average when it's cold, and well below average when it's not.  Itching for some regression analysis using climate data, aren't you?
 
-As you can see, there are many stories to be told.  
-
-Part of my task was to generate one final image.  If I was limited to only 1 figure, I'd want to caputre all of the data.  I got close.  This is what it would look like.
+As you can see, there are many stories to be told.  Part of my task was to generate one final image.  If I was limited to only 1 figure, I'd want to caputre all of the data.  I got close.  This is what it would look like.
 
 Get ready for it... this is 'eUGE' !
 
